@@ -3,6 +3,9 @@ import os
 from flask import Flask
 from flask_socketio import SocketIO, emit
 
+# in case you forget $env:FLASK_APP ='application.py'
+#                    $env:FLASK_ENV ='development'
+
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 socketio = SocketIO(app)
