@@ -16,7 +16,8 @@ def index():
     return render_template("index.html")
 
 @socketio.on("submit message")
-def chat(message):
+def chat(data):
+    message = data["message"]
     emit("display message", {"message": message}, broadcast=True)
 
 if __name__ == '__main__':
