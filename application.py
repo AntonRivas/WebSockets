@@ -15,10 +15,16 @@ messages = []
 def index():
     return render_template("index.html")
 
+@socketio.on("connect")
+def message():
+    emit("connect", {"messages": messages}, broadcast = True )
+
 @socketio.on("submit message")
 def chat(data):
+    messages.append(data)
     message = data["message"]
-    emit("display message", {"message": message}, broadcast=True)
+    name = data["name"]
+    emit("display message", {"message": message, "name": name}, broadcast=True)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
