@@ -1,43 +1,129 @@
 
 
 document.addEventListener('DOMContentLoaded', () => {
+    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
-//clears the displayname
+  //Chooses what to display, either a form to submit your username or the chatroom
+    if (!localStorage.getItem('displayname')){
+        let display = document.querySelector('#display');
+        document.querySelector('h1').innerHTML = 'Welcome to Chatter!';
+        document.getElementById("create_channel").disabled = true;
+        document.getElementById("select_channel").disabled = true;
+        formFill(display);
+        }
+    else if(!localStorage.getItem('last_channel')){
+      document.querySelector('h1').innerHTML = 'Welcome: ' + localStorage.getItem('displayname');
+      let display = document.querySelector('#display');
+      display.innerHTML = 'No channels currently exist'
+    }
+
+    else{
+        let display = document.querySelector('#display');
+        document.querySelector('h1').innerHTML = localStorage.getItem('last_channel');
+        document.getElementById("select_channel").disabled = false;
+        chatFill(display);
+    }
+
+  socket.on('connect', (data) => {
+    localStorage.setItem("messages", data);
+  })
+  //receiving and displaying messages in real time
+  socket.on('display message', message => {
+          console.log(message);
+          channel_current = localStorage.getItem('last_channel');
+          const div = document.createElement('div');
+          div.innerHTML = message["name"] + " : " + message["message"];
+          chatlog = localStorage.getItem(channel_current);
+          chatlog = chatlog ? chatlog.split(',') : [];
+          console.log(typeof chatlog);
+          updated_log = chatlog.push({"name": message["name"], "log": message["message"]});
+          localStorage.setItem(channel_current, updated_log);
+          document.querySelector('#messages').appendChild(div);
+      });
+
+    if (!localStorage.getItem('channel_list')){
+      localStorage.setItem('channel_list', [])
+    }
+
+//creating channel list
+    document.getElementById("select_channel").onclick = () => {
+      if (!document.getElementById('list')){
+        list = document.createElement('list');
+        list.id = 'list';
+      }
+      else{
+        list = document.getElementById("list");
+      }
+      document.getElementById("select_channel").disabled = true;
+      back = document.createElement('button');
+      back.innerHTML = 'Go back';
+      back.id = 'back_button'
+      back.onclick = () =>  {
+        document.getElementById("menu").removeChild(back);
+        list = document.getElementById("list");
+        while (list.childNodes[0]){
+          list.removeChild(list.childNodes[0]);
+        }
+        document.getElementById("select_channel").disabled = false;
+      }
+      channel_list = localStorage.getItem('channel_list');
+      channel_list = channel_list ? channel_list.split(',') : [] ;
+      channel_length = channel_list.length;
+      for (var i = 0; i < channel_length; i++){
+        div = document.createElement('div');
+        div.innerHTML = channel_list[i];
+        div.id = channel_list[i];
+        div.onclick = function setChannel(){
+            localStorage.setItem('last_channel', this.innerHTML);
+            document.querySelector('h1').innerHTML = this.innerHTML;
+            chatFill(document.querySelector('#display'));
+        }
+        document.getElementById("list").appendChild(div);
+      }
+    document.getElementById("menu").appendChild(list);
+    document.getElementById("menu").appendChild(back);
+    }
+//creating new channels
+  document.getElementById("create_channel").onclick = () => {
+    console.log("Created Channel")
+    back = document.createElement('button');
+    back.innerHTML = 'Go back';
+    back.id = 'back_button'
+    back.onclick = () =>  {
+      document.getElementById("menu").removeChild(back);
+      document.getElementById("menu").removeChild(channel);
+      document.getElementById("create_channel").disabled = false;
+      console.log("removed child");
+      }
+    channel = document.createElement('form');
+    channel.id = 'channel_form';
+    channel_name = document.createElement('input');
+    channel_name.type = 'text';
+    channel_submit = document.createElement('input');
+    channel_submit.type = 'submit';
+    channel_name.id = 'channel_name';
+    channel_submit.value = 'Add New Channel';
+    channel_name.placeholder = 'Enter Channel Name';
+    document.getElementById("menu").appendChild(channel);
+    document.getElementById("menu").appendChild(back);
+    channel.appendChild(channel_name);
+    channel.appendChild(channel_submit);
+    document.getElementById("create_channel").disabled = true;
+    createChannel();
+  }
+
+//clears the localStorage
   document.getElementById('clear').onclick = () => {
       let display = document.querySelector('#display');
       formFill(display);
       localStorage.clear();
   }
 
-  var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
-
-//Chooses what to display, either a form to submit your username or the chatroom
-  if (!localStorage.getItem('displayname')){
-      let display = document.querySelector('#display');
-      formFill(display);
-      }
-  else{
-      let display = document.querySelector('#display');
-      chatFill(display);
-
-  }
-
-socket.on('connect', (data) => {
-  localStorage.setItem("messages", data);
-})
-//receiving and displaying messages in real time
-  socket.on('display message', message => {
-        console.log(message);
-        let messagelist = localStorage.getItem("messages");
-        const li = document.createElement('li');
-        user = message["name"];
-        li.innerHTML = user + " : " + message["message"];
-        document.querySelector('#messages').append(li);
-    });
 })
 
 //Creates form to enter username
 function formFill (element){
+  document.querySelector('h1').innerHTML = 'Welcome to Chatter!';
   if (element.childNodes[0]){
     element.removeChild(element.childNodes[0]);
   }
@@ -57,10 +143,36 @@ function formFill (element){
   formSubmit();
 }
 
+//processes and sets up the channel
+function createChannel(){
+  document.querySelector("#channel_form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        let name = document.querySelector('#channel_name').value;
+        channel_list = localStorage.getItem('channel_list');
+        channel_list = channel_list ? channel_list.split(',') : [];
+        channel_list.push(name);
+        localStorage.setItem('channel_list', channel_list);
+        localStorage.setItem("last_channel", name);
+        localStorage.setItem(name, [{"name": "user", "log": "channel created"}]);
+        let display = document.querySelector('#display');
+        document.getElementById("menu").removeChild(document.querySelector('#channel_form'));
+        document.getElementById("menu").removeChild(document.querySelector('#back_button'));
+        document.getElementById("create_channel").disabled = false;
+        console.log("Added channel");
+        chatFill(display);
+        while (document.querySelector('#messages').firstChild){
+          document.querySelector('#messages').removeChild(document.querySelector('#messages').firstChild);
+        }
+        return false;
+  })
+}
+
+//loads up the channel and chatlog
 function chatFill (element){
   if (element.firstChild){
     element.removeChild(element.firstChild);
   }
+  channel_name = localStorage.getItem("last_channel");
   chat = document.createElement('form');
   chat.id = 'chat';
   chat_input = document.createElement('input');
@@ -72,6 +184,7 @@ function chatFill (element){
   chat_submit.value = 'Submit Message';
   chat.appendChild(chat_input);
   chat.appendChild(chat_submit);
+  document.querySelector('h1').innerHTML = channel_name;
   element.appendChild(chat);
   chatSubmit();
 }
@@ -82,8 +195,17 @@ function formSubmit(){
         e.preventDefault();
         let displayname = document.querySelector('#displayname').value;
         localStorage.setItem('displayname', displayname);
+        document.querySelector('h1').innerHTML = 'Welcome ' + localStorage.getItem('displayname') + '!';
         let display = document.querySelector('#display')
-        chatFill(display);
+        if(!localStorage.getItem('last_channel')){
+          let display = document.querySelector('#display');
+          display.innerHTML = 'No channels currently exist'
+        }
+        else{
+          chatFill(display);
+        }
+        document.getElementById("create_channel").disabled = false;
+        document.getElementById("select_channel").disabled = false;
         return false;
   })
 }

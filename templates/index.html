@@ -2,15 +2,20 @@
 
 {% block title %}Web Sockets{% endblock %}
 
-
-{% block heading %}Project 2: Websockets App{% endblock %}
-
 {% block body %}
+
+<h1 id = 'heading'></h1>
 
 <header>
 
-<ul id = "messages"></ul>
+<div id = "messages"></div>
 <div id = "display">
+</div>
+
+<div id = "menu">
+<button id = "create_channel">New Channel</button>
+<button id = "select_channel">Select Channel</button>
+<div id = "list"></div>
 </div>
 
 <button id = "clear">Clear Display Name</button>
