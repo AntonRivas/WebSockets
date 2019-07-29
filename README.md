@@ -8,10 +8,10 @@ DisplayName - When a user joins, they are prompted to enter a displayname which 
 
 Simple Messaging - Users are able to message in real time between each other [COMPLETED]
 
-MessageView - The last 100 messages sent should be stored on the server side and retrieved when returning to the website [IN PROGRESS]
+MessageView - Messages from channels are stored serverside via AJAX requests [IN PROGRESS]
 
-Channel Creation & List - Users can create channels and view a list of existing channels [INCOMPLETE]
+Channel Creation & List - Users can create channels and view a list of existing channels [COMPLETED]
 
-CSS - Making the website appear nice [INCOMPLETE]
+CSS - Making the website appear nice [COMPLETED]
 
 
