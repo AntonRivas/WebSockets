@@ -1,0 +1,96 @@
+
+.super{
+background-color: #ffe6b3;
+position: absolute; top: 0;
+left: 0;
+width: 100%;
+height: 100%
+}
+.container{
+display: flex;
+flex-direction: row;
+justify-content: center;
+position: absolute; top: 0;
+margin-left: 15%;
+margin-right: 5%;
+width: 70%;
+height: 100%;
+text-align: center;
+background-color: #fff7e6;
+}
+
+#messages{
+border:1px solid black;
+text-align: center;
+width: 100%;
+height: 50%;
+background-color: white;
+margin-bottom: 10px;
+overflow-y: auto;
+}
+
+.channel_selection{
+font-family: Arial;
+font-size: 120%;
+}
+
+.channel_selection:hover{
+background-color:#e6f2ff;
+color: #404040;
+}
+
+.message{
+margin-left: 1%;
+font-family: Arial;
+font-size: 120%;
+text-align: left;
+word-wrap: break-word;
+}
+
+input{
+margin-top: 2%;
+font-size: 120%;
+}
+
+#heading{
+font-family: Arial Narrow;
+font-size: 250%;
+margin-bottom: 2.5%;
+}
+
+
+#box1{
+flex: 2 0 0;
+flex-shrink: 0;
+display: flex;
+flex-direction: column;
+}
+
+#box2{
+flex: 1 0 0;
+margin-top: 10%;
+margin-left: 0px;
+display: flex;
+align-items: center;
+flex-direction: column;
+}
+#clear{
+width: 50%;
+}
+
+button{
+margin-top:2%;
+margin-bottom: 2%;
+border-radius: 5px;
+font-size: 120%;
+font-family: Arial;
+}
+
+button:hover {
+  background-color: #999999; 
+  color: white;
+}
+
+hr{
+border: 0.5px solid;
+}
