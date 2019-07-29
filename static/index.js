@@ -6,20 +6,20 @@ document.addEventListener('DOMContentLoaded', () => {
   //Chooses what to display, either a form to submit your username or the chatroom
     if (!localStorage.getItem('displayname')){
         let display = document.querySelector('#display');
-        document.querySelector('h1').innerHTML = 'Welcome to Chatter!';
+        document.querySelector('#heading').innerHTML = 'Welcome to Chatter!';
         document.getElementById("create_channel").disabled = true;
         document.getElementById("select_channel").disabled = true;
         formFill(display);
         }
     else if(!localStorage.getItem('last_channel')){
-      document.querySelector('h1').innerHTML = 'Welcome: ' + localStorage.getItem('displayname');
+      document.querySelector('#heading').innerHTML = 'Welcome: ' + localStorage.getItem('displayname') + "!";
       let display = document.querySelector('#display');
       display.innerHTML = 'No channels currently exist'
     }
 
     else{
         let display = document.querySelector('#display');
-        document.querySelector('h1').innerHTML = localStorage.getItem('last_channel');
+        document.querySelector('#heading').innerHTML = localStorage.getItem('last_channel');
         document.getElementById("select_channel").disabled = false;
         chatFill(display);
     }
@@ -32,13 +32,16 @@ document.addEventListener('DOMContentLoaded', () => {
           console.log(message);
           channel_current = localStorage.getItem('last_channel');
           const div = document.createElement('div');
+          const hr = document.createElement('hr');
           div.innerHTML = message["name"] + " : " + message["message"];
+          div.className = 'message'
           chatlog = localStorage.getItem(channel_current);
           chatlog = chatlog ? chatlog.split(',') : [];
-          console.log(typeof chatlog);
-          updated_log = chatlog.push({"name": message["name"], "log": message["message"]});
-          localStorage.setItem(channel_current, updated_log);
+          console.log(JSON.stringify(chatlog));
+          chatlog.push(message);
+          localStorage.setItem(channel_current, chatlog);
           document.querySelector('#messages').appendChild(div);
+          document.querySelector('#messages').appendChild(hr);
       });
 
     if (!localStorage.getItem('channel_list')){
@@ -73,17 +76,22 @@ document.addEventListener('DOMContentLoaded', () => {
         div = document.createElement('div');
         div.innerHTML = channel_list[i];
         div.id = channel_list[i];
+        div.className = 'channel_selection';
         div.onclick = function setChannel(){
+            messsages = document.getElementById('messages');
+            while (messages.childNodes[0]){
+              messages.removeChild(messages.childNodes[0])
+            }
             localStorage.setItem('last_channel', this.innerHTML);
-            document.querySelector('h1').innerHTML = this.innerHTML;
-            chatFill(document.querySelector('#display'));
+            document.getElementById('messages').appendChild(div);
         }
+        chatFill(document.querySelector('#display'));
         document.getElementById("list").appendChild(div);
       }
     document.getElementById("menu").appendChild(list);
     document.getElementById("menu").appendChild(back);
     }
-//creating new channels
+  //creating new channels
   document.getElementById("create_channel").onclick = () => {
     console.log("Created Channel")
     back = document.createElement('button');
@@ -93,8 +101,9 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById("menu").removeChild(back);
       document.getElementById("menu").removeChild(channel);
       document.getElementById("create_channel").disabled = false;
+      document.getElementById("select_channel").disabled = false;
       console.log("removed child");
-      }
+    }
     channel = document.createElement('form');
     channel.id = 'channel_form';
     channel_name = document.createElement('input');
@@ -109,12 +118,19 @@ document.addEventListener('DOMContentLoaded', () => {
     channel.appendChild(channel_name);
     channel.appendChild(channel_submit);
     document.getElementById("create_channel").disabled = true;
+    document.getElementById("select_channel").disabled = true;
     createChannel();
   }
 
 //clears the localStorage
   document.getElementById('clear').onclick = () => {
       let display = document.querySelector('#display');
+      messsages = document.getElementById('messages');
+      while (messages.childNodes[0]){
+        messages.removeChild(messages.childNodes[0])
+      }
+      document.getElementById("create_channel").disabled = true;
+      document.getElementById("select_channel").disabled = true;
       formFill(display);
       localStorage.clear();
   }
@@ -123,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 //Creates form to enter username
 function formFill (element){
-  document.querySelector('h1').innerHTML = 'Welcome to Chatter!';
+  document.querySelector('#heading').innerHTML = 'Welcome to Chatter!';
   if (element.childNodes[0]){
     element.removeChild(element.childNodes[0]);
   }
@@ -158,6 +174,7 @@ function createChannel(){
         document.getElementById("menu").removeChild(document.querySelector('#channel_form'));
         document.getElementById("menu").removeChild(document.querySelector('#back_button'));
         document.getElementById("create_channel").disabled = false;
+        document.getElementById("select_channel").disabled = false;
         console.log("Added channel");
         chatFill(display);
         while (document.querySelector('#messages').firstChild){
@@ -177,14 +194,12 @@ function chatFill (element){
   chat.id = 'chat';
   chat_input = document.createElement('input');
   chat_input.type = 'text';
-  chat_input.id = 'message'
+  chat_input.id = 'message';
+  chat.className = 'forms';
   chat_input.placeholder = 'Type a message';
   chat_submit = document.createElement('input');
-  chat_submit.type = 'submit';
-  chat_submit.value = 'Submit Message';
   chat.appendChild(chat_input);
-  chat.appendChild(chat_submit);
-  document.querySelector('h1').innerHTML = channel_name;
+  document.querySelector('#heading').innerHTML = channel_name;
   element.appendChild(chat);
   chatSubmit();
 }
@@ -195,7 +210,7 @@ function formSubmit(){
         e.preventDefault();
         let displayname = document.querySelector('#displayname').value;
         localStorage.setItem('displayname', displayname);
-        document.querySelector('h1').innerHTML = 'Welcome ' + localStorage.getItem('displayname') + '!';
+        document.querySelector('#heading').innerHTML = 'Welcome ' + localStorage.getItem('displayname') + '!';
         let display = document.querySelector('#display')
         if(!localStorage.getItem('last_channel')){
           let display = document.querySelector('#display');

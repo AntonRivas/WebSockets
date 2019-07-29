@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit
 
 # in case you forget $env:FLASK_APP ='application.py'
@@ -11,9 +11,15 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 socketio = SocketIO(app)
 
 messages = []
-@app.route("/")
+
+@app.route("/", methods = ["GET", "POST"])
 def index():
-    return render_template("index.html")
+    if request.method == 'POST':
+        chatlog = request.get("chatlog")
+        channel_name = request.get("channel_name")
+        return "completed post"
+    else:
+        return render_template("index.html")
 
 @socketio.on("connect")
 def message():

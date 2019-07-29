@@ -4,20 +4,25 @@
 
 {% block body %}
 
-<h1 id = 'heading'></h1>
+<div class = 'super'>
+<div class = 'container'>
 
-<header>
-
+<div id = 'box1'>
+<p  id = 'heading'></p>
 <div id = "messages"></div>
 <div id = "display">
 </div>
+</div>
 
+<div id = 'box2'>
 <div id = "menu">
 <button id = "create_channel">New Channel</button>
 <button id = "select_channel">Select Channel</button>
 <div id = "list"></div>
 </div>
+<button id = "clear">Clear All</button>
+</div>
 
-<button id = "clear">Clear Display Name</button>
-
+</div>
+</div>
 {% endblock %}
