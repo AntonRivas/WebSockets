@@ -84,18 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("menu").appendChild(back);
     }
 
-//creating back button
-  back = document.getElementsByClassName("back_button")
-  var i ;
-  for (i = 0; i < back.length; i++){
-    back[i].addEventListener.onclick = () => {
-      document.getElementById("menu").removeChild(back);
-      document.getElementById("menu").removeChild(channel);
-      document.getElementById("create_channel").disabled = false;
-      document.getElementById("select_channel").disabled = false;
-      console.log("removed child");
-    };
-  }
+
 
   //processes and sets up the channel
 
