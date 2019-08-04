@@ -16,9 +16,18 @@
 
 <div id = 'box2'>
 <div id = "menu">
-<button id = "create_channel">New Channel</button>
-<button id = "select_channel">Select Channel</button>
-<div id = "list"></div>
+<button id = "create_channel" class = "collapsible">New Channel</button>
+<div>
+  <form id = "channel_form">
+    <input type = "text">Channel Name</input>
+  </form>
+  <button class = "back_button">Go Back</button>
+</div>
+<button id = "select_channel" class = "collapsible">Select Channel</button>
+  <div>
+    <div id = "list"></div>
+    <button class = "back_button">Go Back</button>
+  </div>
 </div>
 <button id = "clear">Clear All</button>
 </div>
