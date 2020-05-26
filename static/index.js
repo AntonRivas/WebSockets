@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
       channel_list = localStorage.getItem('channel_list');
       channel_list = channel_list ? channel_list.split(',') : [] ;
       channel_length = channel_list.length;
+      console.log(channel_list)
       for (var i = 0; i < channel_length; i++){
         div = document.createElement('div');
         div.innerHTML = channel_list[i];
